@@ -29,6 +29,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	//caffeine cache
 	implementation 'com.github.ben-manes.caffeine:caffeine'
+	//spring security, BCryptPasswordEncoder: ¥[±K±K½X¥Î
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	//spring cache
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	//caffeine cache
+	implementation 'com.github.ben-manes.caffeine:caffeine'
 	//Hot Deployment
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	

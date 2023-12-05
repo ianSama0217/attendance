@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 
 @Entity
 @Table(name = "leave_type")

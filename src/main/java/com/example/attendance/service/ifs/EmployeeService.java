@@ -1,8 +1,9 @@
 package com.example.attendance.service.ifs;
 
-import com.example.attendance.vo.EmployeeCreateReq;
+import com.example.attendance.entity.Employee;
+import com.example.attendance.vo.EmployeeCreateRes;
 
 public interface EmployeeService {
-	
-	public void create(EmployeeCreateReq req);
+
+	public EmployeeCreateRes create(Employee req);
 }
