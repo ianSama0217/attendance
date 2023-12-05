@@ -29,6 +29,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	//caffeine cache
 	implementation 'com.github.ben-manes.caffeine:caffeine'
+	//Hot Deployment
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

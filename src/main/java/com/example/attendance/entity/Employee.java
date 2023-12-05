@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "empolyee")
-public class Empolyee {
+@Table(name = "employee")
+public class Employee {
 
 	@Id
 	@Column(name = "id")
@@ -51,12 +51,12 @@ public class Empolyee {
 	@Column(name = "sick_leave")
 	private int sickLeave;
 
-	public Empolyee() {
+	public Employee() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Empolyee(String id, String department, String name, String password, String email, String jobPosition,
+	public Employee(String id, String department, String name, String password, String email, String jobPosition,
 			LocalDate birthDate, LocalDate arrivalDate, LocalDate resignationDate, String quitReason, boolean active,
 			int annualLeave, int sickLeave) {
 		super();
