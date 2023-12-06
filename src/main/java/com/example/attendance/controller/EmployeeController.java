@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.attendance.constants.RtnCode;
 import com.example.attendance.service.ifs.EmployeeService;
 import com.example.attendance.vo.BasicRes;
+import com.example.attendance.vo.ChangePasswordReq;
 import com.example.attendance.vo.EmployeeCreateReq;
+import com.example.attendance.vo.ForgotPasswordReq;
 import com.example.attendance.vo.LoginReq;
 
 @RestController
@@ -63,5 +65,25 @@ public class EmployeeController {
 		}
 
 		return service.create(req);
+	}
+
+	@PostMapping(value = "/attendance/employee/change_password")
+	public BasicRes changePassword(@RequestBody ChangePasswordReq req, HttpSession session) {
+		// 有登入帳號才能更改密碼
+		if (session.getAttribute(req.getId()) == null) {
+			return new BasicRes(RtnCode.LOGIN_FIRST);
+		}
+
+		return service.changePassword(req.getId(), req.getOldPwd(), req.getNewPwd());
+	}
+
+	@PostMapping(value = "/attendance/employee/forgot_password")
+	public BasicRes forgotPassword(@RequestBody ForgotPasswordReq req) {
+		return service.forgotPassword(req.getId(), req.getEmail());
+	}
+
+	@PostMapping(value = "/attendance/employee/change_password_by_auth_code")
+	public BasicRes changePasswordByAuthCode(@RequestBody ChangePasswordReq req) {
+		return service.changePasswordByAuthCode(req.getId(), req.getAuthCode(), req.getNewPwd());
 	}
 }

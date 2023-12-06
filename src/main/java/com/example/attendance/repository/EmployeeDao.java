@@ -8,4 +8,5 @@ import com.example.attendance.entity.Employee;
 @Repository
 public interface EmployeeDao extends JpaRepository<Employee, String> {
 
+	public Employee findByEmail(String email);
 }
