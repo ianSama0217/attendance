@@ -57,6 +57,19 @@ public class Employee {
 	}
 
 	public Employee(String id, String department, String name, String password, String email, String jobPosition,
+			LocalDate birthDate, LocalDate arrivalDate) {
+		super();
+		this.id = id;
+		this.department = department;
+		this.name = name;
+		this.password = password;
+		this.email = email;
+		this.jobPosition = jobPosition;
+		this.birthDate = birthDate;
+		this.arrivalDate = arrivalDate;
+	}
+
+	public Employee(String id, String department, String name, String password, String email, String jobPosition,
 			LocalDate birthDate, LocalDate arrivalDate, LocalDate resignationDate, String quitReason, boolean active,
 			int annualLeave, int sickLeave) {
 		super();

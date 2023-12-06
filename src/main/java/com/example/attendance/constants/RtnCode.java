@@ -6,6 +6,13 @@ public enum RtnCode {
 	PARAM_ERROR(400, "Param error!"), //
 	ID_HAS_EXISTED(400, "ID has existed!"), //
 	DEPARTMENT_NOT_FOUND(404, "Department not found!"), //
+	ID_NOT_FOUND(404, "ID not found!"), //
+	PASSWORD_ERROR(400, "Password error!"), //
+	EMPLOYEE_CREATE_ERROR(400, "Employee create error!"), //
+	LOGIN_FIRST(400, "Login first!"), //
+	UNAUTHORIZATED(401, "Unauthorizated!"), //
+	CHANGE_PASSWORD_ERROR(400, "Change password error!"), //
+	OLD_PASSWORD_AND_NEW_PASSWORD_ARE_IDENTICAL(400, "Old password and new password are identical!"), //
 	;
 
 	private int code;

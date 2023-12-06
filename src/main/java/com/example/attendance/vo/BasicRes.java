@@ -2,16 +2,16 @@ package com.example.attendance.vo;
 
 import com.example.attendance.constants.RtnCode;
 
-public class EmployeeCreateRes {
+public class BasicRes {
 
 	private RtnCode rtnCode;
 
-	public EmployeeCreateRes() {
+	public BasicRes() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public EmployeeCreateRes(RtnCode rtnCode) {
+	public BasicRes(RtnCode rtnCode) {
 		super();
 		this.rtnCode = rtnCode;
 	}
