@@ -25,4 +25,13 @@ public class DepartmentsTest {
 		DepartmentsCreateRes res = service.create(req);
 		System.out.println(res.getRtnCode().getMessage());
 	}
+
+	@Test
+	public void createDepTest() {
+		DepartmentsCreateReq req = new DepartmentsCreateReq(//
+				Arrays.asList(new Departments("01", "HR"), //
+						new Departments("02", "IT")));
+		DepartmentsCreateRes res = service.create(req);
+		System.out.println(res.getRtnCode().getMessage());
+	}
 }

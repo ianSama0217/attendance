@@ -1,5 +1,6 @@
 package com.example.attendance.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -16,9 +17,11 @@ import org.springframework.util.StringUtils;
 import com.example.attendance.constants.RtnCode;
 import com.example.attendance.entity.AuthCode;
 import com.example.attendance.entity.Employee;
+import com.example.attendance.entity.ResignApplication;
 import com.example.attendance.repository.AuthCodeDao;
 import com.example.attendance.repository.DepartmentsDao;
 import com.example.attendance.repository.EmployeeDao;
+import com.example.attendance.repository.ResignApplicationDao;
 import com.example.attendance.service.ifs.EmployeeService;
 import com.example.attendance.vo.EmployeeCreateReq;
 
@@ -33,7 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	/* org.slf4j.Logger */
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	@Value("${authCode.expired.time}")
 	private int authCodeExpiredTime;
 
@@ -45,6 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private AuthCodeDao authDao;
+
+	@Autowired
+	private ResignApplicationDao resignDao;
 
 	@Override
 	public BasicRes create(EmployeeCreateReq req) {
@@ -96,6 +102,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (!encoder.matches(password, employee.getPassword())) {
 			return new BasicRes(RtnCode.PASSWORD_ERROR);
 		}
+
+		// 確認帳號active狀態 -> 停用
+		if (!employee.isActive()) {
+			return new BasicRes(RtnCode.ACCOUNT_DEACTIVE);
+		}
+
 		session.setAttribute(id, id);
 		// 單位:秒, 預設1800s(30min)
 		session.setMaxInactiveInterval(300);
@@ -114,14 +126,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 			return new BasicRes(RtnCode.OLD_PASSWORD_AND_NEW_PASSWORD_ARE_IDENTICAL);
 		}
 
-		// 檢查id & pwd
-		Optional<Employee> op = empDao.findById(id);
+		// 不用判斷是否為空，此方法必須先登入才能使用
+		Employee employee = empDao.findById(id).get();
 
-		if (op.isEmpty()) {
-			return new BasicRes(RtnCode.ID_NOT_FOUND);
-		}
-		// 比對密碼
-		Employee employee = op.get();
 		// matches(輸入的密碼, 資料庫內的密碼)
 		if (!encoder.matches(oldPwd, employee.getPassword())) {
 			return new BasicRes(RtnCode.PASSWORD_ERROR);
@@ -217,6 +224,117 @@ public class EmployeeServiceImpl implements EmployeeService {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return new BasicRes(RtnCode.CHANGE_PASSWORD_ERROR);
+		}
+
+		return new BasicRes(RtnCode.SUCCESSFUL);
+	}
+
+	@Override
+	public BasicRes activate(String executorId, String employeeId) {
+		if (!StringUtils.hasText(executorId) || !StringUtils.hasText(employeeId) || //
+				executorId.equals(employeeId)) {
+			return new BasicRes(RtnCode.PARAM_ERROR);
+		}
+
+		// 不用判斷是否為空，此方法必須先登入才能使用
+		Employee executor = empDao.findById(executorId).get();
+		// department是admin或HR才能updateActivate
+		if (!executor.getDepartment().equalsIgnoreCase("ADMIN") || //
+				!executor.getDepartment().equalsIgnoreCase("HR")) {
+			return new BasicRes(RtnCode.UNAUTHORIZATED);
+		}
+
+		if (empDao.updateActivate(employeeId, true) != 1) {
+			return new BasicRes(RtnCode.UPDATE_FAILED);
+		}
+
+		return new BasicRes(RtnCode.SUCCESSFUL);
+	}
+
+	@Override
+	public BasicRes deactivate(String executorId, String employeeId) {
+		if (!StringUtils.hasText(executorId) || !StringUtils.hasText(employeeId) || //
+				executorId.equals(employeeId)) {
+			return new BasicRes(RtnCode.PARAM_ERROR);
+		}
+
+		// 不用判斷是否為空，此方法必須先登入才能使用
+		Employee executor = empDao.findById(executorId).get();
+		// department是admin或HR才能updateActivate
+		if (!executor.getDepartment().equalsIgnoreCase("ADMIN") || //
+				!executor.getDepartment().equalsIgnoreCase("HR")) {
+			return new BasicRes(RtnCode.UNAUTHORIZATED);
+		}
+
+		if (empDao.updateActivate(employeeId, false) != 1) {
+			return new BasicRes(RtnCode.UPDATE_FAILED);
+		}
+
+		return new BasicRes(RtnCode.SUCCESSFUL);
+	}
+
+	@Override
+	public BasicRes updateActivate(String executorId, String employeeId, boolean isActive) {
+		if (!StringUtils.hasText(executorId) || !StringUtils.hasText(employeeId) || //
+				executorId.equals(employeeId)) {
+			return new BasicRes(RtnCode.PARAM_ERROR);
+		}
+
+		// 不用判斷是否為空，此方法必須先登入才能使用
+		Employee executor = empDao.findById(executorId).get();
+		// department是admin或HR才能updateActivate
+		if (!executor.getDepartment().equalsIgnoreCase("ADMIN") || //
+				!executor.getDepartment().equalsIgnoreCase("HR")) {
+			return new BasicRes(RtnCode.UNAUTHORIZATED);
+		}
+
+		// 如果儲存成功，回傳1(儲存資料成功的筆數)
+		if (empDao.updateActivate(employeeId, isActive) != 1) {
+			return new BasicRes(RtnCode.UPDATE_FAILED);
+		}
+		return new BasicRes(RtnCode.SUCCESSFUL);
+	}
+
+	@Override
+	public BasicRes resign(String executorId, String employeeId) {
+		if (!StringUtils.hasText(executorId) || !StringUtils.hasText(employeeId) || //
+				executorId.equals(employeeId)) {
+			return new BasicRes(RtnCode.PARAM_ERROR);
+		}
+
+		// 不用判斷是否為空，此方法必須先登入才能使用
+		// 只有HR可以更改離職員工資料
+		Employee executor = empDao.findById(executorId).get();
+		if (!executor.getDepartment().equalsIgnoreCase("HR")) {
+			return new BasicRes(RtnCode.UNAUTHORIZATED);
+		}
+
+		Employee employee = empDao.findById(employeeId).get();
+		employee.setResignationDate(LocalDate.now().plusMonths(1));
+		employee.setQuitReason("學長欺負我:(");
+		try {
+			empDao.save(employee);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return new BasicRes(RtnCode.UPDATE_FAILED);
+		}
+
+		return new BasicRes(RtnCode.SUCCESSFUL);
+	}
+
+	@Override
+	public BasicRes resignApplication(String employeeId) {
+		// 不用判斷employeeId是否為空，此方法必須先登入才能使用
+		Employee employee = empDao.findById(employeeId).get();
+
+		try {
+			resignDao.save(new ResignApplication(//
+					employeeId, employee.getDepartment(), //
+					LocalDate.now().plusMonths(1), //
+					"學長欺負我:("));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return new BasicRes(RtnCode.UPDATE_FAILED);
 		}
 
 		return new BasicRes(RtnCode.SUCCESSFUL);
