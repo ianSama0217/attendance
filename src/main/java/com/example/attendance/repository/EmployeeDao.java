@@ -19,9 +19,9 @@ public interface EmployeeDao extends JpaRepository<Employee, String> {
 	//回傳資料型態int => 儲存成功(1筆資料)
 	@Modifying(clearAutomatically = true)
 	@Transactional
-	@Query(value = "update Employee set active = inputActive"//
+	@Query(value = "update Employee set active = :inputActive"//
 			+ " where id = :inputId")
 	public int updateActivate(@Param("inputId") String employeeId, //
-			@Param("inputActivate") boolean active);
+			@Param("inputActive") boolean active);
 
 }

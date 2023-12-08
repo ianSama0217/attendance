@@ -18,6 +18,14 @@ public enum RtnCode {
 	AUTH_CODE_EXPIRED(400, "Auth code expired!"), //
 	UPDATE_FAILED(400, "Update fail!"), //
 	ACCOUNT_DEACTIVE(400, "Account deactive!"), //
+	LEAVE_TYPE_ERROR(400, "Leave type error!"), //
+	LEAVE_APPLIED_DATETIME_ERROR(400, "Leave applied datetime error!"), //
+	LEAVE_REASON_CANNOT_BE_EMPTY(400, "Leave reason cannot be empty!"), //
+	LEAVE_REVIEW_ID_CANNOT_BE_EMPTY(400, "Leave review id cannot be empty!"), //
+	LEAVE_REVIEW_ID_NOT_FOUND(400, "Leave review id not found!"), //
+	PERMISSION_DENIED(403, "Permission denied!"), //
+	LEAVE_APPLIED_ERROR(403, "Leave applied error!"), //
+	LEAVE_APPLICATION_NOT_FOUND(400, "Leave application not found!"), //
 	;
 
 	private int code;

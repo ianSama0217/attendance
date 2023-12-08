@@ -108,7 +108,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			return new BasicRes(RtnCode.ACCOUNT_DEACTIVE);
 		}
 
-		session.setAttribute(id, id);
+		session.setAttribute(id, employee.getDepartment());
 		// 單位:秒, 預設1800s(30min)
 		session.setMaxInactiveInterval(300);
 		logger.info("login successful");
